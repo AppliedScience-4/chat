@@ -21,7 +21,10 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"tamasfe.even-better-toml"
+				"tamasfe.even-better-toml",
+				"rangav.vscode-thunder-client",
+				"biomejs.biome",
+				"oderwat.indent-rainbow"
 			]
 		}
 	}

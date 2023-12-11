@@ -24,7 +24,8 @@
 				"tamasfe.even-better-toml",
 				"rangav.vscode-thunder-client",
 				"biomejs.biome",
-				"oderwat.indent-rainbow"
+				"oderwat.indent-rainbow",
+				"GitHub.vscode-github-actions"
 			]
 		}
 	}

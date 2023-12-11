@@ -14,7 +14,6 @@ import { HumanMessage, SystemMessage } from "langchain/schema";
 type Bindings = {
 	OPENAI_API_KEY: string;
 	BUCKET: R2Bucket;
-	R2_IMAGE_KV: KVNamespace;
 	USER: string;
 	PASS: string;
 };
@@ -35,11 +34,14 @@ chat.post(
 		z.object({
 			body: z.object({
 				image: z.string().refine(Base64.isValid),
+				langage: z.string(),
 			}),
 		}),
 	),
 	async (c) => {
-		const data = await c.req.json<{ body: { image: string } }>();
+		const data = await c.req.json<{
+			body: { image: string; langage: string };
+		}>();
 		const base64 = data.body.image;
 
 		const type = detectType(base64);
@@ -55,18 +57,18 @@ chat.post(
 			},
 		});
 
-		const llm = new ChatOpenAI({
+		const vision = new ChatOpenAI({
 			openAIApiKey: c.env.OPENAI_API_KEY,
 			modelName: "gpt-4-vision-preview",
 			maxTokens: 300,
 		});
 
-		const result = await llm.invoke([
+		const text = await vision.invoke([
 			new SystemMessage({
 				content: [
 					{
 						type: "text",
-						text: 'Describe the provided image URL in Japanese. Output the description in JSON format: {"description": string}',
+						text: "You are OCR machine. Output the characters in the given image. You can only respond with the extracted text.",
 					},
 				],
 			}),
@@ -75,6 +77,31 @@ chat.post(
 					{
 						type: "image_url",
 						image_url: `https://image.sayoi341.moe/${key}`,
+					},
+				],
+			}),
+		]);
+
+		const chat = new ChatOpenAI({
+			openAIApiKey: c.env.OPENAI_API_KEY,
+			modelName: "gpt-4",
+			maxTokens: 300,
+		});
+
+		const result = await chat.invoke([
+			new SystemMessage({
+				content: [
+					{
+						type: "text",
+						text: `Translate the text given by the user into ${data.body.langage}.`,
+					},
+				],
+			}),
+			new HumanMessage({
+				content: [
+					{
+						type: "text",
+						text: text.content.toString(),
 					},
 				],
 			}),

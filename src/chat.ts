@@ -83,7 +83,7 @@ chat.post(
 
     const chat = new ChatOpenAI({
       openAIApiKey: c.env.OPENAI_API_KEY,
-      modelName: "gpt-4",
+      modelName: "gpt-4-turbo-preview",
       maxTokens: 300,
     });
 

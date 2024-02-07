@@ -56,57 +56,61 @@ chat.post(
       },
     });
 
-    const vision = new ChatOpenAI({
-      openAIApiKey: c.env.OPENAI_API_KEY,
-      modelName: "gpt-4-vision-preview",
-      maxTokens: 300,
-    });
+    try {
+      const vision = new ChatOpenAI({
+        openAIApiKey: c.env.OPENAI_API_KEY,
+        modelName: "gpt-4-vision-preview",
+        maxTokens: 300,
+      });
 
-    const text = await vision.invoke([
-      new SystemMessage({
-        content: [
-          {
-            type: "text",
-            text: "You are OCR machine. Output the characters in the given image. You can only respond with the extracted text. Ignore any characters that are cut off, obscured, or blurred due to lighting or other issues. ",
-          },
-        ],
-      }),
-      new HumanMessage({
-        content: [
-          {
-            type: "image_url",
-            image_url: `https://image.sayoi341.moe/${key}`,
-          },
-        ],
-      }),
-    ]);
+      const text = await vision.invoke([
+        new SystemMessage({
+          content: [
+            {
+              type: "text",
+              text: "You are OCR machine. Output the characters in the given image. You can only respond with the extracted text. Ignore any characters that are cut off, obscured, or blurred due to lighting or other issues. ",
+            },
+          ],
+        }),
+        new HumanMessage({
+          content: [
+            {
+              type: "image_url",
+              image_url: `https://image.sayoi341.moe/${key}`,
+            },
+          ],
+        }),
+      ]);
 
-    const chat = new ChatOpenAI({
-      openAIApiKey: c.env.OPENAI_API_KEY,
-      modelName: "gpt-4-turbo-preview",
-      maxTokens: 300,
-    });
+      const chat = new ChatOpenAI({
+        openAIApiKey: c.env.OPENAI_API_KEY,
+        modelName: "gpt-4-turbo-preview",
+        maxTokens: 300,
+      });
 
-    const result = await chat.invoke([
-      new SystemMessage({
-        content: [
-          {
-            type: "text",
-            text: `Translate the text given by the user into ${data.language}.`,
-          },
-        ],
-      }),
-      new HumanMessage({
-        content: [
-          {
-            type: "text",
-            text: text.content.toString(),
-          },
-        ],
-      }),
-    ]);
+      const result = await chat.invoke([
+        new SystemMessage({
+          content: [
+            {
+              type: "text",
+              text: `Translate the text given by the user into ${data.language}.`,
+            },
+          ],
+        }),
+        new HumanMessage({
+          content: [
+            {
+              type: "text",
+              text: text.content.toString(),
+            },
+          ],
+        }),
+      ]);
 
-    return c.json(result.toJSON());
+      return c.json(result.toJSON());
+    } catch (e) {
+      return c.json({ error: e.message });
+    }
   }
 );
 

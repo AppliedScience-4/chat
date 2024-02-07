@@ -3,7 +3,7 @@
 	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
-			"version": "20.10.0"
+			"version": "21.5.0"
 		}
 	},
 	"postCreateCommand": "$(which pnpm) i",

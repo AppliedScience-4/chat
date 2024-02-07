@@ -67,7 +67,7 @@ chat.post(
         content: [
           {
             type: "text",
-            text: "You are OCR machine. Output the characters in the given image. You can only respond with the extracted text.",
+            text: "You are OCR machine. Output the characters in the given image. You can only respond with the extracted text. Ignore any characters that are cut off, obscured, or blurred due to lighting or other issues. ",
           },
         ],
       }),
